@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/32.0">
+	<id>net.blaxstar.LOG4AIR</id>
+	<versionNumber>0.0.0</versionNumber>
+	<filename>LOG4AIR</filename>
+	<name>LOG4AIR</name>
+	<initialWindow>
+		<content>[Path to content will be replaced by Visual Studio Code]</content>
+		<visible>true</visible>
+	</initialWindow>
+</application>
