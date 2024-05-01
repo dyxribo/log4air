@@ -2,7 +2,8 @@
 	"config": "air",
 	"compilerOptions": {
 		"source-path": [
-			"src"
+			"src",
+      "thirdparty"
 		],
 		"output": "bin/Main.swf",
     "default-background-color": "#3d3d3d",

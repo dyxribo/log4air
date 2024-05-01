@@ -2,12 +2,14 @@
 bin-debug/
 bin-release/
 [Oo]bj/
-[Bb]in/
+bin/application.xml
+bin/Main.swf
 
 # Other files and folders
 .settings/
 scripts
-Main.as
+src/net/blaxstar/log4air/policies
+src/net/blaxstar/log4air/interfaces/IPolicy.as
 
 # Executables
 *.swf

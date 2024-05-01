@@ -86,7 +86,6 @@ package net.blaxstar.log4air {
             if (specifiers[i] == "%%")
                 rest.unshift("");
         }
-        trace(format);
         return format;
     }
 

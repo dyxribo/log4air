@@ -1,0 +1,32 @@
+{
+  "appenders": [
+    {
+      "name": "STDOUT",
+      "class": "net.blaxstar.log4air.appenders.ConsoleAppender",
+      "layout": {
+        "class": "net.blaxstar.log4air.layouts.PatternLayout",
+        "pattern": "%date%level%class %msg"
+      }
+    },
+    {
+      "name": "FILE",
+      "class": "net.blaxstar.log4air.appenders.FileAppender",
+      "layout": {
+        "class": "net.blaxstar.log4air.layouts.PatternLayout",
+        "pattern": "%date%level%class %msg"
+      },
+      "filepath": "fakefile.log"
+    }
+  ],
+  "loggers": [
+    {
+      "name": "Main",
+      "level": "INFO",
+      "appender_ref": "STDOUT"
+    }
+  ],
+  "root": {
+    "level": "OFF",
+    "appender_ref": "STDOUT"
+  }
+}

@@ -7,8 +7,15 @@
       "label": "BUILD & RUN",
       "dependsOrder": "sequence",
       "dependsOn": [
-        "ActionScript: compile debug - asconfig.json",
-      ],
+        "ActionScript: compile debug - asconfig.json"
+      ]
+    },
+    {
+      "type": "actionscript",
+      "debug": true,
+      "group": "build",
+      "problemMatcher": [],
+      "label": "ActionScript: compile debug - asconfig.json"
     }
   ]
 }
