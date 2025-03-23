@@ -15,18 +15,23 @@
         "class": "net.blaxstar.log4air.layouts.PatternLayout",
         "pattern": "%date%level%class %msg"
       },
-      "filepath": "fakefile.log"
+      "filepath": "/Users/dyxribo/Desktop/log4air.log"
     }
   ],
   "loggers": [
     {
-      "name": "Main",
-      "level": "INFO",
-      "appender_ref": "STDOUT"
+      "name": "STDOUT",
+      "level": "DEBUG",
+      "type": "STDOUT"
+    },
+    {
+      "name": "LOGFILE",
+      "level": "DEBUG",
+      "type": "FILE"
     }
   ],
   "root": {
     "level": "OFF",
-    "appender_ref": "STDOUT"
+    "type": "STDOUT"
   }
 }

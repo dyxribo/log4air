@@ -44,7 +44,7 @@ The below shows the example config file (located in the bin folder as log4air_co
 }
 
 ```
-appenders and layouts are extendable, so you can create your own custom configs. currently, there are the base `Appender` class, `ConsoleAppender` for writing to standard output, and `FileAppender` for writing to files. multiple output appenders per logger is not yet supported but is coming soon. 
+appenders and layouts are extendable, so you can create your own custom configs. currently, there are the base `Appender` class, `ConsoleAppender` for writing to standard output, and `FileAppender` for writing to files. You can use multiple loggers at the same time (stdout and to file at the same time, for example). you can also turn loggers off by setting their level to "OFF".
 
 once your config is how you want it, simply reference your appender classes and layouts somewhere in your application so that they are compiled, then get an instance of your logger to start using right away:
 

@@ -8,8 +8,26 @@ package net.blaxstar.log4air.core {
     import net.blaxstar.log4air.dataholder.Level;
     import net.blaxstar.log4air.dataholder.LevelHolder;
 
+    /**
+     * ConfigurationParser is responsible for parsing the logging configuration from a JSON object.
+     * It extracts the appenders and loggers defined in the configuration and creates instances of them.
+     * The appenders are stored in a HashMap keyed by their names, while the loggers are returned as an array of LoggerInfo objects.
+     * It also handles the parsing of appender properties, allowing for nested properties to be set correctly.
+     * This class is essential for setting up the logging framework based on a provided configuration file.
+     * @author Deron Decamp
+     * @version 1.0
+     * @date 2025.03.23
+     */
     public class ConfigurationParser {
 
+        /**
+         * parses the appenders defined in the provided JSON object and returns a HashMap of appender instances.
+         * each appender is created based on its class name and properties defined in the JSON object.
+         * the appender name is used as the key in the HashMap.
+         * @param json the JSON object containing the appender configuration.
+         * @return  a HashMap containing appender instances, keyed by their names.
+         * @throws error if the class specified in the JSON object cannot be found or instantiated.
+         */
         static public function parse_appenders(json:Object):HashMap {
             var appenders:Array = json.appenders;
             var instances:HashMap = new HashMap();
@@ -37,29 +55,61 @@ package net.blaxstar.log4air.core {
             return instances;
         }
 
-        static public function parse_loggers(json:Object):Array {
-            var loggers:Array = json.loggers;
-            var root:Object = json.root;
-            var instances:Array = [];
+        /**
+         * parses the loggers defined in the provided json object and returns an array of LoggerInfo objects.
+         * @param configuration_json the JSON object containing the logger configuration.
+         * @return an array of LoggerInfo objects representing the loggers defined in the configuration.
+         */
+        static public function parse_loggers(configuration_json:Object):Array {
+            var loggers:Array = configuration_json.loggers;
+            var root:Object = configuration_json.root;
+            var config_objects:Array = [];
             var num_loggers:uint = loggers.length;
 
+            if (!has_content(configuration_json)) {
+                return null;
+            }
+
             for (var i:int = 0; i < num_loggers; i++) {
-                var logger_info:LoggerInfo = parse_logger(loggers[i]);
+                var logger_config:Object = loggers[i];
 
-                if (logger_info) {
-                    instances.push(logger_info);
+                if (!logger_config || typeof logger_config != "object") {
+                    throw new Error("[ERROR][CONFIG_PARSER] possible bad configuration: logger config was parsed as an null object!");
+                    return null;
                 }
+
+                if (!logger_config.hasOwnProperty("type") || !logger_config.hasOwnProperty("name") || !logger_config.hasOwnProperty("level")) {
+                    throw new Error("[ERROR][CONFIG_PARSER] possible bad configuration: logger type, name or level was not found!");
+                    return null;
+                }
+
+                var level:Level = LevelHolder.get_level(logger_config.level);
+
+                if (!level) {
+                    return null;
+                }
+
+                var logger_info:LoggerInfo = new LoggerInfo(root, logger_config.name, level, logger_config.type);
+                config_objects.push(logger_info);
             }
+
             if (root) {
-                logger_info = parse_logger(root, true);
+                logger_info = new LoggerInfo(true, logger_config.name, level, logger_config.type);
 
-                if (logger_info) {
-                    instances.push(parse_logger(root, true));
+                if (logger_info && root.level !== "OFF") {
+                    config_objects.push(logger_info);
                 }
             }
-            return instances;
+            return config_objects;
         }
 
+        /**
+         * parses the properties of an appender from the provided JSON object and assigns them to the given property holder.
+         * this function recursively processes nested properties if the appender has its own properties defined.
+         * @param json the JSON object containing the appender properties.
+         * @param property_holder the object that holds the properties to be set.
+         * @throws error if the class specified in the JSON object cannot be found or instantiated.
+         */
         static public function parse_appender_properties(json:Object, property_holder:IPropertiesHolder):void {
             for (var property:Object in json) {
                 var current_property:Object = json[property];
@@ -87,31 +137,17 @@ package net.blaxstar.log4air.core {
             }
         }
 
-        static private function parse_logger(json:Object, root:Boolean = false):LoggerInfo {
-            if (!has_content(json)) {
-                return null;
-            }
-            var logger_name:String = String(json.name).toUpperCase();
-            var level_name:String = String(json.level).toUpperCase();
-            // TODO: allow multiple appender references as array. will need to refactor how the logger parses them.
-            var appender_name:String = json.appender_ref;
-            var level:Level = LevelHolder.get_level(level_name);
-
-            if (!level) {
-                return null;
-            }
-
-            var logger_info:LoggerInfo = new LoggerInfo(root, logger_name, level, appender_name);
-
-            return logger_info;
-        }
-
+        /**
+         * checks if the provided JSON object has any content (i.e., properties).
+         * @param json The JSON object to check for content.
+         * @return true if the JSON object has at least one property, false otherwise.
+         */
         static private function has_content(json:Object):Boolean {
-
             for each (var item:Object in json) {
                 return true;
             }
             return false;
         }
+
     }
 }

@@ -8,6 +8,7 @@ package {
     import net.blaxstar.log4air.appenders.FileAppender;
     FileAppender;
     import net.blaxstar.log4air.layouts.PatternLayout;
+    import flash.utils.getQualifiedClassName;
     PatternLayout;
 
     public class Main extends Sprite {
@@ -16,7 +17,7 @@ package {
         public function Main() {
             log.info("initializing app...");
             var fairy:Sprite = new Sprite();
-            log.debug("Created class: {}", fairy);
+            log.debug("Created class: {}", getQualifiedClassName(fairy));
             addChild(fairy);
             log.debug("added man to {}", this);
             log.info("main finished");
