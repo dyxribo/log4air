@@ -1,0 +1,19 @@
+{
+  "config": "air",
+  "compilerOptions": {
+    "source-path": ["src", "thirdparty"],
+    "output": "bin/Main.swf",
+    "default-background-color": "#3d3d3d",
+    "default-frame-rate": 60,
+    "advanced-telemetry": true,
+    "benchmark": true,
+    "debug": true,
+    "use-gpu": true,
+    "default-size": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "mainClass": "Main",
+  "application": "src/application.xml"
+}

@@ -1,7 +1,8 @@
 {
   "config": "air",
   "compilerOptions": {
-    "source-path": ["src", "thirdparty"],
+    "source-path": ["src"],
+    "library-path": ["libs"],
     "output": "bin/log4air.swc"
   },
   "files": ["src/Main.as"]

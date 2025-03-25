@@ -1,4 +1,5 @@
-package net.blaxstar.log4air.core {
+package net.blaxstar.log4air.core
+{
     import net.blaxstar.log4air.utils.HashMap;
     import net.blaxstar.log4air.utils.LogUtils;
     import net.blaxstar.log4air.appenders.Appender;
@@ -18,7 +19,8 @@ package net.blaxstar.log4air.core {
      * @version 1.0
      * @date 2025.03.23
      */
-    public class ConfigurationParser {
+    public class ConfigurationParser
+    {
 
         /**
          * parses the appenders defined in the provided JSON object and returns a HashMap of appender instances.
@@ -28,27 +30,36 @@ package net.blaxstar.log4air.core {
          * @return  a HashMap containing appender instances, keyed by their names.
          * @throws error if the class specified in the JSON object cannot be found or instantiated.
          */
-        static public function parse_appenders(json:Object):HashMap {
+        static public function parse_appenders(json:Object):HashMap
+        {
             var appenders:Array = json.appenders;
             var instances:HashMap = new HashMap();
             var num_appenders:uint = appenders.length;
 
-            for (var i:int = 0; i < num_appenders; i++) {
+            for (var i:int = 0; i < num_appenders; i++)
+            {
                 var current_appender:Object = appenders[i];
                 var class_name:String = current_appender["class"];
                 var appender_name:String = String(current_appender.name).toUpperCase();
                 var appender_class:Class = LogUtils.get_definition(class_name);
 
-                if (appender_class) {
-                    try {
+                if (appender_class)
+                {
+                    try
+                    {
                         var appender:Appender = new appender_class(appender_name) as Appender;
-                        if (appender) {
+                        if (appender)
+                        {
                             parse_appender_properties(current_appender, appender);
                             instances.add(appender_name, appender);
                         }
-                    } catch (error:Error) {
                     }
-                } else {
+                    catch (error:Error)
+                    {
+                    }
+                }
+                else
+                {
                     printf("[ERROR][CONFIG_PARSER] appender class %s not found; make sure that it was compiled with your application!", class_name);
                 }
             }
@@ -60,32 +71,38 @@ package net.blaxstar.log4air.core {
          * @param configuration_json the JSON object containing the logger configuration.
          * @return an array of LoggerInfo objects representing the loggers defined in the configuration.
          */
-        static public function parse_loggers(configuration_json:Object):Array {
+        static public function parse_loggers(configuration_json:Object):Array
+        {
             var loggers:Array = configuration_json.loggers;
             var root:Object = configuration_json.root;
             var config_objects:Array = [];
             var num_loggers:uint = loggers.length;
 
-            if (!has_content(configuration_json)) {
+            if (!has_content(configuration_json))
+            {
                 return null;
             }
 
-            for (var i:int = 0; i < num_loggers; i++) {
+            for (var i:int = 0; i < num_loggers; i++)
+            {
                 var logger_config:Object = loggers[i];
 
-                if (!logger_config || typeof logger_config != "object") {
+                if (!logger_config || typeof logger_config != "object")
+                {
                     throw new Error("[ERROR][CONFIG_PARSER] possible bad configuration: logger config was parsed as an null object!");
                     return null;
                 }
 
-                if (!logger_config.hasOwnProperty("type") || !logger_config.hasOwnProperty("name") || !logger_config.hasOwnProperty("level")) {
+                if (!logger_config.hasOwnProperty("type") || !logger_config.hasOwnProperty("name") || !logger_config.hasOwnProperty("level"))
+                {
                     throw new Error("[ERROR][CONFIG_PARSER] possible bad configuration: logger type, name or level was not found!");
                     return null;
                 }
 
                 var level:Level = LevelHolder.get_level(logger_config.level);
 
-                if (!level) {
+                if (!level || level.name == "OFF")
+                {
                     return null;
                 }
 
@@ -93,10 +110,12 @@ package net.blaxstar.log4air.core {
                 config_objects.push(logger_info);
             }
 
-            if (root) {
+            if (root)
+            {
                 logger_info = new LoggerInfo(true, logger_config.name, level, logger_config.type);
 
-                if (logger_info && root.level !== "OFF") {
+                if (logger_info && root.level !== "OFF")
+                {
                     config_objects.push(logger_info);
                 }
             }
@@ -110,28 +129,40 @@ package net.blaxstar.log4air.core {
          * @param property_holder the object that holds the properties to be set.
          * @throws error if the class specified in the JSON object cannot be found or instantiated.
          */
-        static public function parse_appender_properties(json:Object, property_holder:IPropertiesHolder):void {
-            for (var property:Object in json) {
+        static public function parse_appender_properties(json:Object, property_holder:IPropertiesHolder):void
+        {
+            for (var property:Object in json)
+            {
                 var current_property:Object = json[property];
 
-                if (current_property.hasOwnProperty("class") && (String(current_property["class"]).length)) {
+                if (current_property.hasOwnProperty("class") && (String(current_property["class"]).length))
+                {
                     var class_name:String = String(current_property["class"]);
                     var main_class:Class = LogUtils.get_definition(class_name);
 
-                    if (main_class) {
-                        try {
+                    if (main_class)
+                    {
+                        try
+                        {
                             var instance:* = new main_class();
-                        } catch (e:Error) {
+                        }
+                        catch (e:Error)
+                        {
                             trace(e);
                         }
                         property_holder.properties[property] = instance;
-                        if (has_content(json[property]) && instance is IPropertiesHolder) {
+                        if (has_content(json[property]) && instance is IPropertiesHolder)
+                        {
                             parse_appender_properties(json[property], IPropertiesHolder(instance));
                         }
-                    } else {
+                    }
+                    else
+                    {
                         printf("[ERROR][CONFIG_PARSER] class %s not found; make sure that it was compiled with your application!", class_name);
                     }
-                } else {
+                }
+                else
+                {
                     property_holder.properties[property] = current_property;
                 }
             }
@@ -142,8 +173,10 @@ package net.blaxstar.log4air.core {
          * @param json The JSON object to check for content.
          * @return true if the JSON object has at least one property, false otherwise.
          */
-        static private function has_content(json:Object):Boolean {
-            for each (var item:Object in json) {
+        static private function has_content(json:Object):Boolean
+        {
+            for each (var item:Object in json)
+            {
                 return true;
             }
             return false;
